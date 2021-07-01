@@ -23,6 +23,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.maxgamer.quickshop.QuickShop;
+import org.maxgamer.quickshop.economy.EconomyTransaction;
 import org.maxgamer.quickshop.shop.Shop;
 import org.maxgamer.quickshop.util.MsgUtil;
 import org.maxgamer.quickshop.util.Util;
@@ -54,19 +55,20 @@ public class OngoingFeeWatcher extends BukkitRunnable {
         for (Shop shop : plugin.getShopManager().getAllShops()) {
             if ((!shop.isUnlimited() || !ignoreUnlimited) && !shop.isDeleted()) {
                 UUID shopOwner = shop.getOwner();
-               Util.mainThreadRun(() -> {
-                   if (!allowLoan && (plugin.getEconomy().getBalance(shopOwner, shop.getLocation().getWorld(), shop.getCurrency()) < cost)) {// Disallow loan
-                       this.removeShop(shop);
-                   }
-                   boolean success = plugin.getEconomy().withdraw(shop.getOwner(), cost, shop.getLocation().getWorld(), shop.getCurrency());
-                   if (!success) {
-                       this.removeShop(shop);
-                   } else {
-                       try {
-                           //noinspection ConstantConditions,deprecation
-                           plugin.getEconomy().deposit(Bukkit.getOfflinePlayer(plugin.getConfig().getString("tax")).getUniqueId(), cost, shop.getLocation().getWorld(), shop.getCurrency());
-                        } catch (Exception ignored) {
-                        }
+                Util.mainThreadRun(() -> {
+
+                    EconomyTransaction transaction = EconomyTransaction.builder()
+                            .allowLoan(allowLoan)
+                            .amount(cost)
+                            .currency(shop.getCurrency())
+                            .core(plugin.getEconomy())
+                            .world(shop.getLocation().getWorld())
+                            .to(plugin.getShopManager().getCacheTaxAccount().getUniqueId())
+                            .from(shopOwner).build();
+
+                    boolean success = transaction.failSafeCommit();
+                    if (!success) {
+                        this.removeShop(shop);
                     }
                 });
             } else {
@@ -84,20 +86,17 @@ public class OngoingFeeWatcher extends BukkitRunnable {
      */
     public void removeShop(@NotNull Shop shop) {
         Util.mainThreadRun(shop::delete);
-        MsgUtil.send(
-                shop,
-                shop.getOwner(),
-                MsgUtil.getMessageOfflinePlayer(
-                        "shop-removed-cause-ongoing-fee",
-                        Bukkit.getOfflinePlayer(shop.getOwner()),
-                        "World:"
-                                + Objects.requireNonNull(shop.getLocation().getWorld()).getName()
-                                + " X:"
-                                + shop.getLocation().getBlockX()
-                                + " Y:"
-                                + shop.getLocation().getBlockY()
-                                + " Z:"
-                                + shop.getLocation().getBlockZ()));
+        MsgUtil.send(shop, shop.getOwner(), new MsgUtil.TransactionMessage(MsgUtil.getMessageOfflinePlayer(
+                "shop-removed-cause-ongoing-fee",
+                Bukkit.getOfflinePlayer(shop.getOwner()),
+                "World:"
+                        + Objects.requireNonNull(shop.getLocation().getWorld()).getName()
+                        + " X:"
+                        + shop.getLocation().getBlockX()
+                        + " Y:"
+                        + shop.getLocation().getBlockY()
+                        + " Z:"
+                        + shop.getLocation().getBlockZ()), null, null));
     }
 
 }

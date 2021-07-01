@@ -414,22 +414,6 @@ public class Paste {
                 finalReport.append("\tpurpur.yml:\n");
                 finalReport.append("\t\t\n").append("Read failed.").append("\n");
             }
-            try {
-                finalReport.append("\t*********************************\n");
-                finalReport.append("\tairplane.air:\n");
-                finalReport
-                        .append("\t\t\n")
-                        .append(
-                                new String(
-                                        Objects.requireNonNull(
-                                                Util.inputStream2ByteArray(new File(new File("."), "airplane.air").getPath())),
-                                        StandardCharsets.UTF_8))
-                        .append("\n");
-            } catch (Exception th) {
-                finalReport.append("\t*********************************\n");
-                finalReport.append("\tairplane.air:\n");
-                finalReport.append("\t\t\n").append("Read failed.").append("\n");
-            }
         } catch (Exception ignored) {
             finalReport.append("\tFailed to get data\n");
         }
@@ -475,6 +459,13 @@ public class Paste {
     public String paste(@NotNull String content) {
         PasteInterface paster;
         try {
+            // Lucko Pastebin
+            paster = new LuckoPastebinPaster();
+            return paster.pasteTheText(content);
+        } catch (Exception ex) {
+            Util.debugLog(ex.getMessage());
+        }
+        try {
             // Pastebin
             paster = new PastebinPaster();
             return paster.pasteTheText(content);
@@ -484,13 +475,6 @@ public class Paste {
         try {
             // Ubuntu Pastebin
             paster = new UbuntuPaster();
-            return paster.pasteTheText(content);
-        } catch (Exception ex) {
-            Util.debugLog(ex.getMessage());
-        }
-        try {
-            // Lucko Pastebin
-            paster = new LuckoPastebinPaster();
             return paster.pasteTheText(content);
         } catch (Exception ex) {
             Util.debugLog(ex.getMessage());
@@ -531,7 +515,7 @@ public class Paste {
         return null;
     }
 
-    enum PasteType {
+    public enum PasteType {
         LUCKO,
         PASTEBIN,
         UBUNTU

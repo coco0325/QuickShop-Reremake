@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.maxgamer.quickshop.util.MsgUtil;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.function.Function;
 
@@ -35,7 +37,7 @@ import java.util.function.Function;
 @Builder
 public class CommandContainer {
     @NotNull
-    private CommandProcesser executor;
+    private CommandHandler<?> executor;
 
     private boolean hidden; // Hide from help, tabcomplete
     /*
@@ -52,13 +54,34 @@ public class CommandContainer {
 
     private boolean disabled; //Set command is disabled or not.
 
-    private boolean playerOnly; //Set command is only for player.
-
-    private boolean consoleOnly; //Set command is only for console.
     @Nullable
     private String disablePlaceholder; //Set the text shown if command disabled
     @Nullable
     private Function<@Nullable CommandSender, @NotNull String> disableCallback; //Set the callback that should return a text to shown
+
+    private Class<?> executorType;
+
+    @NotNull
+    public Class<?> getExecutorType() {
+        if (executorType == null) {
+            bakeExecutorType();
+        }
+        return executorType;
+    }
+
+    public void bakeExecutorType() {
+        for (Method declaredMethod : getExecutor().getClass().getDeclaredMethods()) {
+            if (!"onCommand".equals(declaredMethod.getName()) && !"onTabComplete".equals(declaredMethod.getName())) {
+                continue;
+            }
+            if (declaredMethod.getParameterCount() != 3 || declaredMethod.getModifiers() != Modifier.PUBLIC) {
+                continue;
+            }
+            executorType = declaredMethod.getParameterTypes()[0];
+            return;
+        }
+        executorType = Object.class;
+    }
 
     public final @NotNull String getDisableText(@NotNull CommandSender sender) {
         if (this.getDisableCallback() != null) {
@@ -69,6 +92,4 @@ public class CommandContainer {
             return MsgUtil.getMessage("command.feature-not-enabled", null);
         }
     }
-
-
 }

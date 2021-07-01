@@ -25,19 +25,18 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.maxgamer.quickshop.QuickShop;
-import org.maxgamer.quickshop.command.CommandProcesser;
+import org.maxgamer.quickshop.command.CommandHandler;
 import org.maxgamer.quickshop.shop.Shop;
 import org.maxgamer.quickshop.util.MsgUtil;
 import org.maxgamer.quickshop.util.Util;
 
 @AllArgsConstructor
-public class SubCommand_CleanGhost implements CommandProcesser {
+public class SubCommand_CleanGhost implements CommandHandler<CommandSender> {
 
     private final QuickShop plugin;
 
     @Override
-    public void onCommand(
-            @NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] cmdArg) {
+    public void onCommand(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] cmdArg) {
         if (cmdArg.length < 1) {
             MsgUtil.sendDirectMessage(sender,
                     ChatColor.YELLOW
@@ -68,13 +67,6 @@ public class SubCommand_CleanGhost implements CommandProcesser {
                 if (shop == null) {
                     continue; // WTF
                 }
-          /*
-          shop.getItem() is a constant that has NotNull annotations so.
-          if (shop.getItem() == null) {
-              MsgUtil.sendMessage(sender,ChatColor.YELLOW + "Shop " + shop + " removing cause item data is damaged.");
-              shop.delete();
-              continue;
-          }*/
                 if (shop.getItem().getType() == Material.AIR) {
                     MsgUtil.sendDirectMessage(sender,
                             ChatColor.YELLOW + "Deleting shop " + shop + " because of corrupted item data.");
@@ -82,13 +74,6 @@ public class SubCommand_CleanGhost implements CommandProcesser {
                     Util.mainThreadRun(shop::delete);
                     continue;
                 }
-          /*
-          shop.getLocation() is a constant that has NotNull annotations so.
-          if (shop.getLocation() == null) {
-              MsgUtil.sendMessage(sender,ChatColor.YELLOW + "Deleting shop " + shop + " because of corrupted location data.");
-              shop.delete();
-              continue;
-          }*/
                 if (shop.getLocation().getWorld() == null) {
                     MsgUtil.sendDirectMessage(sender,
                             ChatColor.YELLOW + "Deleting shop " + shop + " because the its world is not loaded.");
@@ -116,8 +101,8 @@ public class SubCommand_CleanGhost implements CommandProcesser {
                                         + shop
                                         + " because it is no longer on the target location or it is not allowed to create shops in this location.");
                         shop.delete();
-                                    }
-                                }); // Post to server main thread to check.
+                    }
+                }); // Post to server main thread to check.
                 try {
                     Thread.sleep(20); // Have a rest, don't blow up the main server thread.
                 } catch (InterruptedException e) {
