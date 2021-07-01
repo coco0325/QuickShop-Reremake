@@ -45,3 +45,5 @@ hs_err_pid*
 .settings/
 .classpath
 .project
+*.jar
+lib/MysqlPlayerDataBridge-v3.36.1.jar
