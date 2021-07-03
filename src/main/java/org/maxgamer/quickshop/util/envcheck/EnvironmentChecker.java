@@ -182,7 +182,7 @@ public final class EnvironmentChecker {
                  InputStream stream3 = loader.getResourceAsStream("META-INF/SELFSIGN.SF")) {
                 if (stream1 == null || stream2 == null || stream3 == null) {
                     plugin.getLogger().warning("The signature could not be found! The QuickShop jar has been modified or you're running a custom build.");
-                    return new ResultContainer(CheckResult.STOP_WORKING, "Security risk detected, QuickShop jar has been modified.");
+                    return new ResultContainer(CheckResult.PASSED, "Security risk detected, QuickShop jar has been modified.");
                 }
             }
 

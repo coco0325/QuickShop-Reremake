@@ -48,7 +48,7 @@ public class Economy_Vault implements EconomyCore, Listener {
     @Getter
     @Setter
     @Nullable
-    private net.milkbowl.vault.economy.Economy vault;
+    public static net.milkbowl.vault.economy.Economy vault;
 
 
     public Economy_Vault(@NotNull QuickShop plugin) {

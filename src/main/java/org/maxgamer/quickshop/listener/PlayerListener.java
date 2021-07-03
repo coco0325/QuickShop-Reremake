@@ -21,6 +21,7 @@ package org.maxgamer.quickshop.listener;
 
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
+import net.craftersland.data.bridge.api.events.SyncCompleteEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -316,8 +317,8 @@ public class PlayerListener extends QSListener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void onJoin(PlayerJoinEvent e) {
+    @EventHandler
+    public void onJoin(SyncCompleteEvent e) {
         // Notify the player any messages they were sent
         if (plugin.getConfig().getBoolean("shop.auto-fetch-shop-messages")) {
             MsgUtil.flush(e.getPlayer());

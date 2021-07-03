@@ -1061,13 +1061,14 @@ public class ShopManager {
         String msg;
         // Notify the shop owner //TODO: move to a standalone method
         Player player = plugin.getServer().getPlayer(seller);
+        double tax = CalculateUtil.multiply(taxModifier, total);
         if (plugin.getConfig().getBoolean("show-tax")) {
             msg = MsgUtil.getMessage(seller, "player-bought-from-your-store-tax",
                     player != null ? player.getName() : seller.toString(),
                     Integer.toString(amount * shop.getItem().getAmount()),
                     Util.getItemStackName(shop.getItem()),
                     Double.toString(total),
-                    Util.format(CalculateUtil.multiply(taxModifier, total), shop));
+                    Util.format(tax, shop));
         } else {
             msg = MsgUtil.getMessage(seller, "player-bought-from-your-store",
                     player != null ? player.getName() : seller.toString(),
@@ -1083,6 +1084,9 @@ public class ShopManager {
                     Integer.toString(shop.getLocation().getBlockZ()),
                     Util.getItemStackName(shop.getItem()));
         }
+
+        double money = total - tax;
+        msg += ";" + money;
 
         MsgUtil.TransactionMessage transactionMessage = new MsgUtil.TransactionMessage(msg, Util.serialize(shop.getItem()), null);
 

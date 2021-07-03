@@ -28,7 +28,6 @@ import org.maxgamer.quickshop.QuickShop;
 import org.maxgamer.quickshop.integration.factionsuuid.FactionsUUIDIntegration;
 import org.maxgamer.quickshop.integration.griefprevention.GriefPreventionIntegration;
 import org.maxgamer.quickshop.integration.lands.LandsIntegration;
-import org.maxgamer.quickshop.integration.plotsquared.PlotSquaredIntegrationProxy;
 import org.maxgamer.quickshop.integration.residence.ResidenceIntegration;
 import org.maxgamer.quickshop.integration.superiorskyblock.SuperiorSkyblock2Integration;
 import org.maxgamer.quickshop.integration.towny.TownyIntegration;
@@ -49,7 +48,6 @@ public class IntegrationHelper extends QuickShopInstanceHolder {
         integratedPluginNameMap.put("Factions", FactionsUUIDIntegration.class);
         integratedPluginNameMap.put("GriefPrevention", GriefPreventionIntegration.class);
         integratedPluginNameMap.put("Lands", LandsIntegration.class);
-        integratedPluginNameMap.put("PlotSquared", PlotSquaredIntegrationProxy.class);
         integratedPluginNameMap.put("Residence", ResidenceIntegration.class);
         integratedPluginNameMap.put("Towny", TownyIntegration.class);
         integratedPluginNameMap.put("WorldGuard", WorldGuardIntegration.class);
