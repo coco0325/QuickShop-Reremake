@@ -117,9 +117,9 @@ public class MsgUtil {
             if (msgs != null) {
                 for (TransactionMessage msg : msgs) {
                     if (p.getPlayer() != null) {
-                        String[] split = msg.getMessage().split(";", 2);
-                        String realmsg = split[0];
-                        double money = Double.parseDouble(split[1]);
+                        int split = msg.getMessage().lastIndexOf(";");
+                        String realmsg = msg.getMessage().substring(0, split);
+                        double money = Double.parseDouble(msg.getMessage().substring(split+1, msg.getMessage().length()-1));
                         Economy_Vault.getVault().depositPlayer(p, money);
                         Util.debugLog("Accepted the msg for player " + p.getName() + " : " + msg);
                         if (msg.getHoverItem() != null) {
@@ -516,11 +516,11 @@ public class MsgUtil {
                     } catch (Exception any) {
                         Util.debugLog("Unknown error, send by plain text.");
                         // Normal msg
-                        MsgUtil.sendDirectMessage(p.getPlayer(), transactionMessage.getMessage());
+                        MsgUtil.sendDirectMessage(p.getPlayer(), transactionMessage.getMessage().substring(0, transactionMessage.getMessage().lastIndexOf(";")));
                     }
                 } else {
                     // Normal msg
-                    MsgUtil.sendDirectMessage(p.getPlayer(), transactionMessage.getMessage());
+                    MsgUtil.sendDirectMessage(p.getPlayer(), transactionMessage.getMessage().substring(0, transactionMessage.getMessage().lastIndexOf(";")));
                 }
             }
         }
@@ -547,15 +547,15 @@ public class MsgUtil {
             if (p.getPlayer() != null) {
                 if (transactionMessage.getHoverItem() != null) {
                     try {
-                        plugin.getQuickChat().sendItemHologramChat(p.getPlayer(), transactionMessage.getMessage(), Objects.requireNonNull(Util.deserialize(transactionMessage.getHoverItem())));
+                        plugin.getQuickChat().sendItemHologramChat(p.getPlayer(), transactionMessage.getMessage().substring(0, transactionMessage.getMessage().lastIndexOf(";")), Objects.requireNonNull(Util.deserialize(transactionMessage.getHoverItem())));
                     } catch (Exception any) {
                         Util.debugLog("Unknown error, send by plain text.");
                         // Normal msg
-                        MsgUtil.sendDirectMessage(p.getPlayer(), transactionMessage.getMessage().split(";", 1)[0]);
+                        MsgUtil.sendDirectMessage(p.getPlayer(), transactionMessage.getMessage().substring(0, transactionMessage.getMessage().lastIndexOf(";")));
                     }
                 } else {
                     // Normal msg
-                    MsgUtil.sendDirectMessage(p.getPlayer(), transactionMessage.getMessage().split(";", 1)[0]);
+                    MsgUtil.sendDirectMessage(p.getPlayer(), transactionMessage.getMessage().substring(0, transactionMessage.getMessage().lastIndexOf(";")));
                 }
             }
         }
