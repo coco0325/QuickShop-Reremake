@@ -117,23 +117,25 @@ public class MsgUtil {
             if (msgs != null) {
                 for (TransactionMessage msg : msgs) {
                     if (p.getPlayer() != null) {
-                        int split = msg.getMessage().lastIndexOf(";");
-                        String realmsg = msg.getMessage().substring(0, split);
-                        double money = Double.parseDouble(msg.getMessage().substring(split+1, msg.getMessage().length()-1));
-                        Economy_Vault.getVault().depositPlayer(p, money);
-                        Util.debugLog("Accepted the msg for player " + p.getName() + " : " + msg);
-                        if (msg.getHoverItem() != null) {
-                            try {
-                                ItemStack data = Util.deserialize(msg.getHoverItem());
-                                if (data == null) {
+                        if(msg.getMessage().contains(";")){
+                            int split = msg.getMessage().lastIndexOf(";");
+                            String realmsg = msg.getMessage().substring(0, split);
+                            double money = Double.parseDouble(msg.getMessage().substring(split+1, msg.getMessage().length()-1));
+                            Economy_Vault.getVault().depositPlayer(p, money);
+                            if (msg.getHoverItem() != null) {
+                                try {
+                                    ItemStack data = Util.deserialize(msg.getHoverItem());
+                                    if (data == null) {
+                                        MsgUtil.sendDirectMessage(p.getPlayer(), realmsg);
+                                    } else {
+                                        plugin.getQuickChat().sendItemHologramChat(player, realmsg, data);
+                                    }
+                                } catch (InvalidConfigurationException e) {
                                     MsgUtil.sendDirectMessage(p.getPlayer(), realmsg);
-                                } else {
-                                    plugin.getQuickChat().sendItemHologramChat(player, realmsg, data);
                                 }
-                            } catch (InvalidConfigurationException e) {
-                                MsgUtil.sendDirectMessage(p.getPlayer(), realmsg);
                             }
                         }
+                        Util.debugLog("Accepted the msg for player " + p.getName() + " : " + msg);
                     }
                 }
                 plugin.getDatabaseHelper().cleanMessageForPlayer(pName);
