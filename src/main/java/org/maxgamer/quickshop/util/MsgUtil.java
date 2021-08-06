@@ -339,7 +339,7 @@ public class MsgUtil {
         updateMessages(messagei18n.getInt("language-version"));
 
         //Update colors
-        messagei18n.loadFromString(Util.parseColours(messagei18n.saveToString()));
+        Util.parseColours(messagei18n);
         /* Print to console this language file's author, contributors, and region*/
         if (!inited) {
             plugin.getLogger().info(getMessage("translation-author", null));
@@ -1483,6 +1483,12 @@ public class MsgUtil {
             setAndUpdate("not-a-integer");
             setAndUpdate("language-version", ++selectedVersion);
         }
+        if (selectedVersion == 58) {
+            setAndUpdate("command.format");
+            setAndUpdate("command.format-disabled");
+            setAndUpdate("language-version", ++selectedVersion);
+        }
+
 
         setAndUpdate("_comment", "Please edit this file after format with json formatter");
     }
