@@ -591,26 +591,26 @@ public class Util {
         return formatter.format((1 - dura / max) * 100.0);
     }
 
-    /**
-     * Use yaw to calc the BlockFace
-     *
-     * @param yaw Yaw (Player.getLocation().getYaw())
-     * @return BlockFace blockFace
-     * @deprecated Use Bukkit util not this one.
-     */
-    @Deprecated
-    @NotNull
-    public static BlockFace getYawFace(float yaw) {
-        if (yaw > 315 && yaw <= 45) {
-            return BlockFace.NORTH;
-        } else if (yaw > 45 && yaw <= 135) {
-            return BlockFace.EAST;
-        } else if (yaw > 135 && yaw <= 225) {
-            return BlockFace.SOUTH;
-        } else {
-            return BlockFace.WEST;
-        }
-    }
+//    /**
+//     * Use yaw to calc the BlockFace
+//     *
+//     * @param yaw Yaw (Player.getLocation().getYaw())
+//     * @return BlockFace blockFace
+//     * @deprecated Use Bukkit util not this one.
+//     */
+//    @Deprecated
+//    @NotNull
+//    public static BlockFace getYawFace(float yaw) {
+//        if (yaw > 315 && yaw <= 45) {
+//            return BlockFace.NORTH;
+//        } else if (yaw > 45 && yaw <= 135) {
+//            return BlockFace.EAST;
+//        } else if (yaw > 135 && yaw <= 225) {
+//            return BlockFace.SOUTH;
+//        } else {
+//            return BlockFace.WEST;
+//        }
+//    }
 
     /**
      * Initialize the Util tools.
@@ -841,35 +841,10 @@ public class Util {
         }
     }
 
+    private volatile static String nmsVersion;
+
     public static boolean isDisplayAllowBlock(@NotNull Material mat) {
-        return mat.isTransparent();
-    }
-
-    public static boolean isAir(@NotNull Material mat) {
-        try {
-            return isAir0(mat); // For newer versions, we had better use Bukkit API
-        } catch (Exception ignored) {
-        }
-        if (mat == Material.AIR) {
-            return true;
-        }
-        /* For 1.13 new AIR */
-        try {
-            if (mat == Material.CAVE_AIR) {
-                return true;
-            }
-            if (mat == Material.VOID_AIR) {
-                return true;
-            }
-        } catch (Exception t) {
-            // ignore
-        }
-        return false;
-    }
-
-    @SuppressWarnings("RedundantThrows")
-    private static boolean isAir0(@NotNull Material mat) throws Exception {
-        return mat.isAir();
+        return mat.isTransparent() || isWallSign(mat);
     }
 
     /**
@@ -882,21 +857,7 @@ public class Util {
         if (material == null) {
             return false;
         }
-        try {
-            return Tag.WALL_SIGNS.isTagged(material);
-        } catch (NoSuchFieldError e) {
-            return "WALL_SIGN".equals(material.name());
-        }
-    }
-
-    /**
-     * Returns true if the world of given location is loaded or not.
-     *
-     * @param loc The location containing world
-     * @return true if the world of given location is loaded or not.
-     */
-    public static boolean isWorldLoaded(Location loc) {
-        return (getNMSVersion().contains("1_13") && loc.getWorld() != null) || loc.isWorldLoaded();
+        return Tag.WALL_SIGNS.isTagged(material);
     }
 
     /**
@@ -906,7 +867,7 @@ public class Util {
      * @return true if the given location is loaded or not.
      */
     public static boolean isLoaded(@NotNull Location loc) {
-        if (!isWorldLoaded(loc)) {
+        if (!loc.isWorldLoaded()) {
             return false;
         }
         // Calculate the chunks coordinates. These are 1,2,3 for each chunk, NOT
@@ -1060,6 +1021,16 @@ public class Util {
     }
 
     private static final ThreadLocal<MineDown> mineDown = ThreadLocal.withInitial(() -> new MineDown(""));
+
+    /**
+     * Parse colors for the YamlConfiguration.
+     *
+     * @param config yaml config
+     */
+    @Deprecated
+    public static void parseColours(@NotNull YamlConfiguration config) {
+        parseColours((ConfigurationSection) config);
+    }
 
     /**
      * Parse colors for the YamlConfiguration.
@@ -1229,8 +1200,11 @@ public class Util {
 
     @NotNull
     public static String getNMSVersion() {
-        String name = Bukkit.getServer().getClass().getPackage().getName();
-        return name.substring(name.lastIndexOf('.') + 1);
+        if (nmsVersion == null) {
+            String name = Bukkit.getServer().getClass().getPackage().getName();
+            nmsVersion = name.substring(name.lastIndexOf('.') + 1);
+        }
+        return nmsVersion;
     }
 
     /**
@@ -1240,31 +1214,11 @@ public class Util {
      */
     @NotNull
     public static Material getSignMaterial() {
-
-        Material signMaterial =
-                Material.matchMaterial(
-                        Objects.requireNonNull(plugin.getConfig().getString("shop.sign-material")));
+        Material signMaterial = Material.matchMaterial(Objects.requireNonNull(plugin.getConfig().getString("shop.sign-material","OAK_WALL_SIGN")));
         if (signMaterial != null) {
             return signMaterial;
         }
-        signMaterial = Material.matchMaterial("OAK_WALL_SIGN"); // Fallback default sign in 1.14
-        if (signMaterial != null) {
-            return signMaterial;
-        }
-        signMaterial = Material.matchMaterial("WALL_SIGN"); // Fallback default sign in 1.13
-        if (signMaterial != null) {
-            return signMaterial;
-        }
-        // What the fuck!?
-        plugin
-                .getLogger()
-                .warning(
-                        "QuickShop can't found any usable sign material, we will use default Sign Material.");
-        try {
-            return Material.OAK_WALL_SIGN;
-        } catch (Exception e) {
-            return Material.matchMaterial("WALL_SIGN");
-        }
+        return Material.OAK_WALL_SIGN;
     }
 
     /**

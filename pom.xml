@@ -25,7 +25,7 @@
     <artifactId>QuickShop</artifactId>
 
     <properties>
-        <pluginver>4.0.9.9</pluginver>
+        <pluginver>4.0.10.0</pluginver>
         <package>org.maxgamer.quickshop</package>
         <developer>Ghost-chu</developer>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -520,7 +520,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>21.0.1</version>
+            <version>22.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -574,36 +574,25 @@
             <version>5.7.2</version>
             <scope>test</scope>
         </dependency>
-
         <!-- Documentation of MockBukkit: https://github.com/seeseemelk/MockBukkit -->
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.16</artifactId>
-            <version>0.35.2</version>
+            <artifactId>MockBukkit-v1.17</artifactId>
+            <version>1.6.0</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spigot-api</artifactId>
-                    <groupId>org.spigotmc</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>annotations</artifactId>
-                    <groupId>org.jetbrains</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- Database lib for testing-->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.34.0</version>
+            <version>3.36.0.1</version>
             <scope>test</scope>
         </dependency>
         <!-- Database lib for testing-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.49</version>
+            <version>8.0.25</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -734,7 +723,7 @@
         </dependency>
         <dependency>
             <groupId>com.rollbar</groupId>
-            <version>[1.0,)</version>
+            <version>1.7.8</version>
             <artifactId>rollbar-java</artifactId>
         </dependency>
         <dependency>
