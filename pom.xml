@@ -577,9 +577,19 @@
         <!-- Documentation of MockBukkit: https://github.com/seeseemelk/MockBukkit -->
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.17</artifactId>
-            <version>1.6.0</version>
+            <artifactId>MockBukkit-v1.16</artifactId>
+            <version>0.35.2</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spigot-api</artifactId>
+                    <groupId>org.spigotmc</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>annotations</artifactId>
+                    <groupId>org.jetbrains</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Database lib for testing-->
         <dependency>
